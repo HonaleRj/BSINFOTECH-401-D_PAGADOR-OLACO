@@ -63,14 +63,16 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validate = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|string|email|max:255|unique:students',
-            'age' => 'sometimes|required|integer|min:1',
+        $students = Student::findOrFail($id);
+
+            $validate = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:students,email,' . $students->id,
+                'age' => 'required|integer|min:1',
         ]);
 
-        $students = Student::findOrFail($id);
         $students->update($validate);
+
         return redirect()->route('students.index')->with('success', 'Student Updated Successfully.');
     }
 
